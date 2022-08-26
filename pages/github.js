@@ -1,12 +1,17 @@
 import Layout from "../components/Layout"
+import Error from './_error'
 
-const github = ({user}) => {
-  
+const github = ({user, statusCode}) => {
+
+  if (statusCode){
+    return <Error statusCode={statusCode}/>
+  }
+
   return (
     <Layout footer={false}>
-      <div class="row">
-        <div class="col-md-4 offset-md-4">
-          <div class="card card-body text-center">
+      <div className="row">
+        <div className="col-md-4 offset-md-4">
+          <div className="card card-body text-center">
             <h1>{user.name}</h1>
             <img src={user.avatar_url} alt=""/>
             <p>{user.bio}</p>
@@ -24,10 +29,13 @@ export async function getServerSideProps(){
   const res = await fetch('https://api.github.com/users/Valar789')
   const data = await res.json()
 
-  console.log(data);
+  const statusCode = res.status > 200 ? res.status : false
+
+  
   return{
     props:{
-      user: data
+      user: data,
+      statusCode,
     }
   }
 }
